@@ -1,6 +1,8 @@
+from flask import g
 from graphene import ID, String, Interface, ObjectType, ID, Int, List, Enum, NonNull
 
 from .enums import Gender
+from app.data import users
 
 
 class BaseInterface(Interface):
@@ -24,12 +26,6 @@ class Book(ObjectType):
     name = String(required=True)
     authors = List(lambda: NonNull(User))
 
-    async def resolve_authors(parent, info):
-        print(info.context)
+    def resolve_authors(parent, info):
         _authors = parent.get('authors')
-        # authors = [user_loader.load(author) for author in _authors]
-        # print(authors)
-        authors = await info.user_loader.load_many(_authors)
-        print(authors)
-
-        return [{"id": '86165d53-784f-4a97-932a-767e004cd7f3', "gender": Gender.FEMALE, "name": "Pamela Reddington", "age": 24}]
+        return [user for user in users if user.get('id') in _authors]

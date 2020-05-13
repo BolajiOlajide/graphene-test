@@ -1,4 +1,5 @@
-from aiodataloader import DataLoader
+from promise import Promise
+from promise.dataloader import DataLoader
 
 from app.data import users
 
@@ -9,7 +10,8 @@ def get_user(key):
 
 
 class UserLoader(DataLoader):
-    async def batch_load_fn(self, keys):
+    def batch_load_fn(self, keys):
         # Here we return a promise that will result on the
         # corresponding user for each key in keys
-        return await [get_user(key) for key in keys]
+        return [get_user(user_id) for user_id in keys]
+
